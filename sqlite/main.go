@@ -1,17 +1,15 @@
 package main
 
 import (
-	"bufio"
 	"database/sql"
-	"fmt"
-	"io"
-	"log"
-	"os"
 	"time"
+	"os"
+	"log"
+	"fmt"
 
-	"github.com/go-sql-driver/mysql"
-	"github.com/montanaflynn/stats"
 	"golang.org/x/text/message"
+	_ "github.com/mattn/go-sqlite3"
+	"github.com/montanaflynn/stats"
 )
 
 func assert(b bool) {
@@ -22,7 +20,6 @@ func assert(b bool) {
 
 const ROWS = 10_000_000
 const TABLE = "testtable1"
-
 var COLUMNS = []string{
 	"a1",
 	"b2",
@@ -40,13 +37,12 @@ var COLUMNS = []string{
 	"l14",
 	"m14",
 }
-
 const COLUMN_SIZE = 32
 
 func prepare(db *sql.DB) {
 	_, err := db.Exec("DROP TABLE IF EXISTS " + TABLE)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to drop: %s", err)
 	}
 
 	ddl := "CREATE TABLE " + TABLE + " (\n  "
@@ -57,24 +53,43 @@ func prepare(db *sql.DB) {
 
 		ddl += column + " TEXT"
 	}
-	ddl += ")" // + " WITH (autovacuum_enabled = false)"
+	ddl += ")"
 	_, err = db.Exec(ddl)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to create table: %s", err)
 	}
 }
 
-func run(db *sql.DB, dataFile string) {
+func run(db *sql.DB, rows [][]any) {
 	tx, err := db.Begin()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	mysql.RegisterLocalFile(dataFile)	
-	query := "LOAD DATA LOCAL INFILE '" + dataFile + "' INTO TABLE " + TABLE
-	_, err = tx.Exec(query)
+	insert := "INSERT INTO " + TABLE + " VALUES (\n  "
+	for i := range COLUMNS {
+		if i > 0 {
+			 insert += ",\n  "
+		}
+		insert += "?"
+	}
+	insert += "\n)"
+	stmt, err := tx.Prepare(insert)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to prepare: %s", err)
+	}
+
+	for i, row := range rows {
+		assert(len(row) == len(COLUMNS))
+		_, err = stmt.Exec(row...)
+		if err != nil {
+			log.Fatalf("Failed to copy row %d: %s", i, err)
+		}
+	}
+
+	err = stmt.Close()
+	if err != nil {
+		log.Fatalf("Failed to close: %s", err)
 	}
 
 	err = tx.Commit()
@@ -83,34 +98,12 @@ func run(db *sql.DB, dataFile string) {
 	}
 }
 
-func writeAll(out io.Writer, bytes []byte) {
-	written := 0
-	for written < len(bytes) {
-		n, err := out.Write(bytes[written:])
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		written += n
-	}
-}
-
-func generateData(n int, outFile string) {
+func generateData(n int) [][]any {
 	f, err := os.Open("/dev/random")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer f.Close()
-
-	outRaw, err := os.Create(outFile)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer outRaw.Sync()
-	defer outRaw.Close()
-
-	out := bufio.NewWriter(outRaw)
-	defer out.Flush()
 
 	totalBytes := COLUMN_SIZE * len(COLUMNS) * n
 	needed := make([]byte, 0, totalBytes)
@@ -137,24 +130,24 @@ func generateData(n int, outFile string) {
 		}
 	}
 
+	data := make([][]any, n)
 	for i := 0; i < n; i++ {
 		rowBase := i * COLUMN_SIZE * len(COLUMNS)
+		row := make([]any, len(COLUMNS))
 		for j := 0; j < len(COLUMNS); j++ {
-			if j > 0 {
-				writeAll(out, []byte(","))
-			}
-			cell := needed[rowBase+j*COLUMN_SIZE : rowBase+(j+1)*COLUMN_SIZE]
+			cell := needed[rowBase + j * COLUMN_SIZE:rowBase + (j + 1) * COLUMN_SIZE]
+			row[j] = cell
 			assert(len(cell) == COLUMN_SIZE)
-			writeAll(out, cell)
 		}
-
-		writeAll(out, []byte("\n"))
+		data[i] = row
 	}
+
 	needed = nil
+	return data
 }
 
 func main() {
-	db, err := sql.Open("mysql", "mariadbtest:mariadbtest@tcp(localhost)/mariadbtest")
+	db, err := sql.Open("sqlite3", "data.sqlite")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -164,63 +157,46 @@ func main() {
 	}
 
 	fmt.Println("Generating data")
-	dataFile := "data.csv"
-	generateData(ROWS, dataFile)
+	data := generateData(ROWS)
 
 	var times []float64
 	var throughput []float64
 	for runs := 0; runs < 10; runs++ {
-		fmt.Println("Preparing run", runs+1)
+		fmt.Println("Preparing run", runs + 1)
 		prepare(db)
 
-		fmt.Println("Executing run", runs+1)
+		fmt.Println("Executing run", runs + 1)
 		t1 := time.Now()
-		run(db, dataFile)
+		run(db, data)
 		t2 := time.Now()
 		diff := t2.Sub(t1).Seconds()
 		times = append(times, diff)
-		throughput = append(throughput, float64(ROWS)/diff)
+		throughput = append(throughput, float64(ROWS) / diff)
 	}
 
 	median, err := stats.Median(times)
-	if err != nil {
-		log.Fatal(err)
-	}
+	if err != nil { log.Fatal(err) }
 
 	min, err := stats.Min(times)
-	if err != nil {
-		log.Fatal(err)
-	}
+	if err != nil { log.Fatal(err) }
 
 	max, err := stats.Max(times)
-	if err != nil {
-		log.Fatal(err)
-	}
+	if err != nil { log.Fatal(err) }
 
 	stddev, err := stats.StandardDeviation(times)
-	if err != nil {
-		log.Fatal(err)
-	}
+	if err != nil { log.Fatal(err) }
 
 	t_median, err := stats.Median(throughput)
-	if err != nil {
-		log.Fatal(err)
-	}
+	if err != nil { log.Fatal(err) }
 
 	t_min, err := stats.Min(throughput)
-	if err != nil {
-		log.Fatal(err)
-	}
+	if err != nil { log.Fatal(err) }
 
 	t_max, err := stats.Max(throughput)
-	if err != nil {
-		log.Fatal(err)
-	}
+	if err != nil { log.Fatal(err) }
 
 	t_stddev, err := stats.StandardDeviation(throughput)
-	if err != nil {
-		log.Fatal(err)
-	}
+	if err != nil { log.Fatal(err) }
 
 	p := message.NewPrinter(message.MatchLanguage("en"))
 	p.Printf("Timing: %.2f ± %.2fs, Min: %.2fs, Max: %.2fs\n", median, stddev, min, max)
