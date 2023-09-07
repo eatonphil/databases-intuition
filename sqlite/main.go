@@ -18,34 +18,26 @@ func assert(b bool) {
 	}
 }
 
-var PRAGMAS = []string{
-	"journal_mode = OFF",
-	"synchronous = 0",
-	"cache_size = 1000000",
-	"locking_mode = EXCLUSIVE",
-	"temp_store = MEMORY",
-}
-
-const ROWS = 100_000_000
+const ROWS = 10_000_000
 const TABLE = "testtable1"
 var COLUMNS = []string{
 	"a1",
 	"b2",
 	"c3",
-	// "d4",
-	// "e5",
-	// "f6",
-	// "g7",
-	// "h8",
-	// "g9",
-	// "h10",
-	// "i11",
-	// "j12",
-	// "k13",
-	// "l14",
-	// "m14",
+	"d4",
+	"e5",
+	"f6",
+	"g7",
+	"h8",
+	"g9",
+	"h10",
+	"i11",
+	"j12",
+	"k13",
+	"l14",
+	"m14",
 }
-const COLUMN_SIZE = 8
+const COLUMN_SIZE = 32
 
 func prepare(db *sql.DB) {
 	_, err := db.Exec("DROP TABLE IF EXISTS " + TABLE)
@@ -68,36 +60,40 @@ func prepare(db *sql.DB) {
 	}
 }
 
-func run(db *sql.DB, rows [][]any) {
+func run(db *sql.DB, rows [][]any, batchSize int) {
 	tx, err := db.Begin()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	insert := "INSERT INTO " + TABLE + " VALUES (\n  "
-	for i := range COLUMNS {
-		if i > 0 {
-			 insert += ",\n  "
+	for cursor := 0; cursor < len(rows); cursor += batchSize {
+		insert := "INSERT INTO " + TABLE + " VALUES (\n  "
+		for i := range COLUMNS {
+			if i > 0 {
+				insert += ",\n  "
+			}
+			insert += "?"
 		}
-		insert += "?"
-	}
-	insert += "\n)"
-	stmt, err := tx.Prepare(insert)
-	if err != nil {
-		log.Fatalf("Failed to prepare: %s", err)
-	}
-
-	for i, row := range rows {
-		assert(len(row) == len(COLUMNS))
-		_, err = stmt.Exec(row...)
+		insert += "\n)"
+		stmt, err := tx.Prepare(insert)
 		if err != nil {
-			log.Fatalf("Failed to copy row %d: %s", i, err)
+			log.Fatalf("Failed to prepare: %s", err)
 		}
-	}
 
-	err = stmt.Close()
-	if err != nil {
-		log.Fatalf("Failed to close: %s", err)
+		subset := rows[cursor:cursor + batchSize]
+		assert(len(subset) <= batchSize)
+		for i, row := range subset {
+			assert(len(row) == len(COLUMNS))
+			_, err = stmt.Exec(row...)
+			if err != nil {
+				log.Fatalf("Failed to copy row %d: %s", i, err)
+			}
+		}
+
+		err = stmt.Close()
+		if err != nil {
+			log.Fatalf("Failed to close: %s", err)
+		}
 	}
 
 	err = tx.Commit()
@@ -164,13 +160,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	for _, pragma := range PRAGMAS {
-		_, err = db.Exec("PRAGMA " + pragma) // Test the connection.
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
 	fmt.Println("Generating data")
 	data := generateData(ROWS)
 
@@ -182,12 +171,19 @@ func main() {
 
 		fmt.Println("Executing run", runs + 1)
 		t1 := time.Now()
-		run(db, data)
+		run(db, data, 50)
 		t2 := time.Now()
 		diff := t2.Sub(t1).Seconds()
 		times = append(times, diff)
 		throughput = append(throughput, float64(ROWS) / diff)
 	}
+
+	var count uint64
+	err = db.QueryRow("SELECT COUNT(1) FROM " + TABLE).Scan(&count)
+	if err != nil {
+		log.Fatal(err)
+	}
+	assert(count == ROWS)
 
 	median, err := stats.Median(times)
 	if err != nil { log.Fatal(err) }
