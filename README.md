@@ -48,6 +48,8 @@ Caveats to think about:
 
 ## MariaDB LOAD DATA LOCAL
 
+[Source](./mariadb-load-data)
+
 Uses a single `LOAD DATA LOCAL` query.
 
 ```
@@ -57,12 +59,21 @@ Throughput: 128,266.45 ± 2,324.53 rows/s, Min: 123,004.14 rows/s, Max: 132,125.
 
 ## PostgreSQL COPY FROM
 
+[Source](./postgres-copy)
+
+Uses a single `COPY` query.
+
 ```
 Timing: 104.53 ± 2.40s, Min: 102.57s, Max: 110.08s
 Throughput: 95,665.37 ± 2,129.25 rows/s, Min: 90,847.08 rows/s, Max: 97,490.96 rows/s
 ```
 
 ## SQLite Parameterized INSERT
+
+[Source](./sqlite)
+
+Parameterizes an `INSERT` query and calls the prepared statement for
+each row.
 
 ```
 Timing: 52.67 ± 1.70s, Min: 49.91s, Max: 55.46s
