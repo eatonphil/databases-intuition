@@ -18,26 +18,34 @@ func assert(b bool) {
 	}
 }
 
-const ROWS = 10_000_000
+var PRAGMAS = []string{
+	"journal_mode = OFF",
+	"synchronous = 0",
+	"cache_size = 1000000",
+	"locking_mode = EXCLUSIVE",
+	"temp_store = MEMORY",
+}
+
+const ROWS = 100_000_000
 const TABLE = "testtable1"
 var COLUMNS = []string{
 	"a1",
 	"b2",
 	"c3",
-	"d4",
-	"e5",
-	"f6",
-	"g7",
-	"h8",
-	"g9",
-	"h10",
-	"i11",
-	"j12",
-	"k13",
-	"l14",
-	"m14",
+	// "d4",
+	// "e5",
+	// "f6",
+	// "g7",
+	// "h8",
+	// "g9",
+	// "h10",
+	// "i11",
+	// "j12",
+	// "k13",
+	// "l14",
+	// "m14",
 }
-const COLUMN_SIZE = 32
+const COLUMN_SIZE = 8
 
 func prepare(db *sql.DB) {
 	_, err := db.Exec("DROP TABLE IF EXISTS " + TABLE)
@@ -154,6 +162,13 @@ func main() {
 	_, err = db.Exec("SELECT 1") // Test the connection.
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	for _, pragma := range PRAGMAS {
+		_, err = db.Exec("PRAGMA " + pragma) // Test the connection.
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	fmt.Println("Generating data")
