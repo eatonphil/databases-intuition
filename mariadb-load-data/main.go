@@ -27,21 +27,21 @@ var COLUMNS = []string{
 	"a1",
 	"b2",
 	"c3",
-	"d4",
-	"e5",
-	"f6",
-	"g7",
-	"h8",
-	"g9",
-	"h10",
-	"i11",
-	"j12",
-	"k13",
-	"l14",
-	"m14",
+	// "d4",
+	// "e5",
+	// "f6",
+	// "g7",
+	// "h8",
+	// "g9",
+	// "h10",
+	// "i11",
+	// "j12",
+	// "k13",
+	// "l14",
+	// "m14",
 }
 
-const COLUMN_SIZE = 32
+const COLUMN_SIZE = 8
 
 func prepare(db *sql.DB) {
 	_, err := db.Exec("DROP TABLE IF EXISTS " + TABLE)
@@ -167,6 +167,8 @@ func main() {
 	dataFile := "data.csv"
 	generateData(ROWS, dataFile)
 
+	p := message.NewPrinter(message.MatchLanguage("en"))
+
 	var times []float64
 	var throughput []float64
 	for runs := 0; runs < 10; runs++ {
@@ -178,6 +180,7 @@ func main() {
 		run(db, dataFile)
 		t2 := time.Now()
 		diff := t2.Sub(t1).Seconds()
+		p.Printf("Completed run in %.2fs\n", diff)
 		times = append(times, diff)
 		throughput = append(throughput, float64(ROWS)/diff)
 	}
@@ -229,7 +232,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	p := message.NewPrinter(message.MatchLanguage("en"))
 	p.Printf("Timing: %.2f ± %.2fs, Min: %.2fs, Max: %.2fs\n", median, stddev, min, max)
 	p.Printf("Throughput: %.2f ± %.2f rows/s, Min: %.2f rows/s, Max: %.2f rows/s\n", t_median, t_stddev, t_min, t_max)
 }
