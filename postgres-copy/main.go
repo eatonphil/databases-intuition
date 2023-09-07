@@ -2,14 +2,14 @@ package main
 
 import (
 	"database/sql"
-	"time"
-	"os"
-	"log"
 	"fmt"
+	"log"
+	"os"
+	"time"
 
-	"golang.org/x/text/message"
 	"github.com/lib/pq"
 	"github.com/montanaflynn/stats"
+	"golang.org/x/text/message"
 )
 
 func assert(b bool) {
@@ -20,6 +20,7 @@ func assert(b bool) {
 
 const ROWS = 10_000_000
 const TABLE = "testtable1"
+
 var COLUMNS = []string{
 	"a1",
 	"b2",
@@ -37,6 +38,7 @@ var COLUMNS = []string{
 	"l14",
 	"m14",
 }
+
 const COLUMN_SIZE = 32
 
 func prepare(db *sql.DB) {
@@ -53,7 +55,7 @@ func prepare(db *sql.DB) {
 
 		ddl += column + " TEXT"
 	}
-	ddl += ")" // + " WITH (autovacuum_enabled = false)"
+	ddl += ")"
 	_, err = db.Exec(ddl)
 	if err != nil {
 		log.Fatal(err)
@@ -106,7 +108,7 @@ func generateData(n int) [][]any {
 	needed := make([]byte, 0, totalBytes)
 
 	var buf = make([]byte, 4096)
-	for len(needed) == totalBytes {
+	for len(needed) != totalBytes {
 		assert(len(needed) <= totalBytes)
 
 		n, err := f.Read(buf)
@@ -132,7 +134,7 @@ func generateData(n int) [][]any {
 		rowBase := i * COLUMN_SIZE * len(COLUMNS)
 		row := make([]any, len(COLUMNS))
 		for j := 0; j < len(COLUMNS); j++ {
-			cell := needed[rowBase + j * COLUMN_SIZE:rowBase + (j + 1) * COLUMN_SIZE]
+			cell := needed[rowBase+j*COLUMN_SIZE : rowBase+(j+1)*COLUMN_SIZE]
 			row[j] = cell
 			assert(len(cell) == COLUMN_SIZE)
 		}
@@ -159,41 +161,64 @@ func main() {
 	var times []float64
 	var throughput []float64
 	for runs := 0; runs < 10; runs++ {
-		fmt.Println("Preparing run", runs + 1)
+		fmt.Println("Preparing run", runs+1)
 		prepare(db)
 
-		fmt.Println("Executing run", runs + 1)
+		fmt.Println("Executing run", runs+1)
 		t1 := time.Now()
 		run(db, data)
 		t2 := time.Now()
 		diff := t2.Sub(t1).Seconds()
 		times = append(times, diff)
-		throughput = append(throughput, float64(ROWS) / diff)
+		throughput = append(throughput, float64(ROWS)/diff)
 	}
 
+	var count uint64
+	err = db.QueryRow("SELECT COUNT(1) FROM " + TABLE).Scan(&count)
+	if err != nil {
+		log.Fatal(err)
+	}
+	assert(count == ROWS)
+
 	median, err := stats.Median(times)
-	if err != nil { log.Fatal(err) }
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	min, err := stats.Min(times)
-	if err != nil { log.Fatal(err) }
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	max, err := stats.Max(times)
-	if err != nil { log.Fatal(err) }
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	stddev, err := stats.StandardDeviation(times)
-	if err != nil { log.Fatal(err) }
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	t_median, err := stats.Median(throughput)
-	if err != nil { log.Fatal(err) }
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	t_min, err := stats.Min(throughput)
-	if err != nil { log.Fatal(err) }
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	t_max, err := stats.Max(throughput)
-	if err != nil { log.Fatal(err) }
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	t_stddev, err := stats.StandardDeviation(throughput)
-	if err != nil { log.Fatal(err) }
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	p := message.NewPrinter(message.MatchLanguage("en"))
 	p.Printf("Timing: %.2f ± %.2fs, Min: %.2fs, Max: %.2fs\n", median, stddev, min, max)

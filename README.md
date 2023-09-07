@@ -70,7 +70,7 @@ Throughput: 95,665.37 ± 2,129.25 rows/s, Min: 90,847.08 rows/s, Max: 97,490.96 
 
 ## SQLite Parameterized INSERT
 
-[Source](./sqlite)
+[Source](./sqlite-insert-prepared)
 
 Parameterizes an `INSERT` query and calls the prepared statement for
 each row.
