@@ -79,3 +79,41 @@ each row.
 Timing: 52.67 ± 1.70s, Min: 49.91s, Max: 55.46s
 Throughput: 189,862.60 ± 6,175.26 rows/s, Min: 180,316.37 rows/s, Max: 200,346.56 rows/s
 ```
+
+## PebbleDB Batch Insert
+
+[Source](./pebble-batch-insert)
+
+Splits up the inserts into batches of 100,000 (PebbleDB has a max
+batch size of 4GB).
+
+### 100M Rows, 16 Columns, Each column 32 bytes
+
+```
+Timing: 82.97 ± 2.99s, Min: 78.17s, Max: 87.81s
+Throughput: 120,524.57 ± 4,365.51 rows/s, Min: 113,883.97 rows/s, Max: 127,918.42 rows/s
+```
+
+### 100M Rows, 3 Columns, Each column 8 bytes
+
+```
+Timing: 15.32 ± 0.70s, Min: 13.82s, Max: 15.93s
+Throughput: 652,938.75 ± 31,429.74 rows/s, Min: 627,658.58 rows/s, Max: 723,686.13 rows/s
+```
+
+# Similar work
+
+## Towards Inserting One Billion Rows in SQLite Under A Minute
+
+https://avi.im/blag/2021/fast-sqlite-inserts/
+
+This study gets about 100M rows of 3 columns (all <= 8 bytes wide)
+into SQLite in under 30s using Rust.
+
+It makes a number of concessions to ACID-compliance that you wouldn't
+actually want to use. So it's value is somewhat limited.
+
+That said, it is solid work since even with all the concessions made
+here (and the change to 3 columns of 8 bytes each), the best I could
+get the SQLite insert to do was 100M in ~180s rather than <30s Avi
+gets.
