@@ -24,6 +24,7 @@ Rise-1](https://eco.us.ovhcloud.com/#filterType=range_element&filterValue=rise).
 * SQLite: 3.40.1
 * PostgreSQL: 15.1
 * MariaDB: 10.5.21
+* Pebble: v0.0.0-20230907151110-6f6852d52f18
 
 ## Methodology
 
@@ -113,11 +114,11 @@ Timing: 16.03 ± 0.27s, Min: 15.69s, Max: 16.74s
 Throughput: 623,745.44 ± 10,296.45 rows/s, Min: 597,525.44 rows/s, Max: 637,489.51 rows/s
 ```
 
-## PebbleDB Batch Insert
+## Pebble Batch Insert
 
 [Source](./pebble-batch-insert)
 
-Splits up the inserts into batches of 100,000 (PebbleDB has a max
+Splits up the inserts into batches of 100,000 (Pebble has a max
 batch size of 4GB).
 
 100M Rows, 16 columns, each column 32 bytes:
