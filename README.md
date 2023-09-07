@@ -54,14 +54,14 @@ Timing: 77.96 ± 1.43s, Min: 75.69s, Max: 81.30s
 Throughput: 128,266.45 ± 2,324.53 rows/s, Min: 123,004.14 rows/s, Max: 132,125.36 rows/s
 ```
 
-## PostgreSQL 
+## PostgreSQL COPY FROM
 
 ```
 Timing: 104.53 ± 2.40s, Min: 102.57s, Max: 110.08s
 Throughput: 95,665.37 ± 2,129.25 rows/s, Min: 90,847.08 rows/s, Max: 97,490.96 rows/s
 ```
 
-## SQLite
+## SQLite Parameterized INSERT
 
 ```
 Timing: 52.67 ± 1.70s, Min: 49.91s, Max: 55.46s
