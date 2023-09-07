@@ -35,16 +35,22 @@ part of the time measurement. Only insertion of generated data is.
 
 # Inserts
 
-For all variations we're:
+For all variations:
 
-* Loading 10M rows with 16 32-byte columns per row
 * No indexes (keeps things simple for the database)
 * No disabling fsync or other anti-durability tricks
+
+And we insert 10M rows of two different sizes:
+
+* 16 columns, 32 bytes each
+* 3 columns, 8 bytes each
 
 Caveats to think about:
 
 * Throughput under sustained load (i.e. not just 10M rows once, but
   10M new rows loaded 100 times) may be different/worse
+* PostgreSQL doesn't have a page cache so it's likely incurring many
+  more `write` syscalls for its B-Tree than MariaDB or SQLite
 
 ## MariaDB LOAD DATA LOCAL
 
