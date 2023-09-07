@@ -38,6 +38,7 @@ part of the time measurement. Only insertion of generated data is.
 For all variations we're:
 
 * Loading 10M rows with 16 32-byte columns per row
+* No indexes (keeps things simple for the database)
 * No disabling fsync or other anti-durability tricks
 
 Caveats to think about:
