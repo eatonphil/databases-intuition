@@ -34,7 +34,7 @@ collect median, standard deviation, min and max of the 10 runs.
 For example, if a program generates 10M rows, the generation is not
 part of the time measurement. Only insertion of generated data is.
 
-# Selects
+# SELECTs
 
 For all variations:
 
@@ -96,7 +96,7 @@ Timing: 3.73 ± 0.49s, Min: 3.71s, Max: 5.05s
 Throughput: 2,677,891.78 ± 273,913.40 rows/s, Min: 1,980,034.10 rows/s, Max: 2,695,158.11 rows/s
 ```
 
-# Inserts
+# INSERTs
 
 For all variations:
 
