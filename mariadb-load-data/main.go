@@ -67,12 +67,6 @@ func writeAll(out io.Writer, bytes []byte) {
 }
 
 func generateData(outFile string) {
-	f, err := os.Open("/dev/random")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer f.Close()
-
 	outRaw, err := os.Create(outFile)
 	if err != nil {
 		log.Fatal(err)

@@ -23,10 +23,17 @@ func main() {
 
 	fmt.Println("Generating data")
 	data := lib.GenerateData()
+	lib.PrepareSQL(db)
+	lib.RunSQLInsertPrepared(db, data, nil)
 
 	lib.Benchmark(func() {
-		lib.PrepareSQL(db)
 	}, func() {
-		lib.RunSQLInsertPrepared(db, data, nil)
+		var n int64
+		err := db.QueryRow("SELECT COUNT(1) FROM " + lib.TABLE + " WHERE a1 <> b2").Scan(&n)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		lib.Assert(n == lib.ROWS)
 	})
 }

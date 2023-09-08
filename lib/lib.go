@@ -18,7 +18,7 @@ func Assert(b bool) {
 	}
 }
 
-const ROWS = 10_000_000
+const ROWS = 1_000_000
 const TABLE = "testtable1"
 
 var COLUMNS = []string{
@@ -36,7 +36,8 @@ var COLUMNS = []string{
 	"j12",
 	"k13",
 	"l14",
-	"m14",
+	"m15",
+	"m16",
 }
 
 const COLUMN_SIZE = 32
