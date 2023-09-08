@@ -66,7 +66,7 @@ Timing: 77.96 ± 1.43s, Min: 75.69s, Max: 81.30s
 Throughput: 128,266.45 ± 2,324.53 rows/s, Min: 123,004.14 rows/s, Max: 132,125.36 rows/s
 ```
 
-10M Rows, 3 columns, each column 8 bytes:
+10M Rows, 4 columns, each column 8 bytes:
 
 ```
 Timing: 23.33 ± 0.27s, Min: 22.71s, Max: 23.87s
@@ -86,7 +86,7 @@ Timing: 104.53 ± 2.40s, Min: 102.57s, Max: 110.08s
 Throughput: 95,665.37 ± 2,129.25 rows/s, Min: 90,847.08 rows/s, Max: 97,490.96 rows/s
 ```
 
-10M Rows, 3 columns, each column 8 bytes:
+10M Rows, 4 columns, each column 8 bytes:
 
 ```
 Timing: 8.16 ± 0.43s, Min: 7.44s, Max: 8.80s
@@ -98,7 +98,7 @@ Throughput: 1,225,986.47 ± 66,631.53 rows/s, Min: 1,136,581.82 rows/s, Max: 1,3
 [Source](./sqlite-insert-prepared)
 
 Parameterizes an `INSERT` query and calls the prepared statement for
-each row.
+each row in transactions of 1M rows at a time.
 
 10M Rows, 16 columns, each column 32 bytes:
 
@@ -107,11 +107,11 @@ Timing: 52.67 ± 1.70s, Min: 49.91s, Max: 55.46s
 Throughput: 189,862.60 ± 6,175.26 rows/s, Min: 180,316.37 rows/s, Max: 200,346.56 rows/s
 ```
 
-10M Rows, 3 columns, each column 8 bytes:
+10M Rows, 4 columns, each column 8 bytes:
 
 ```
-Timing: 16.03 ± 0.27s, Min: 15.69s, Max: 16.74s
-Throughput: 623,745.44 ± 10,296.45 rows/s, Min: 597,525.44 rows/s, Max: 637,489.51 rows/s
+Timing: 12.38 ± 0.26s, Min: 11.95s, Max: 12.83s
+Throughput: 807,794.59 ± 16,950.56 rows/s, Min: 779,397.67 rows/s, Max: 836,649.66 rows/s
 ```
 
 ## Pebble Batch Insert
@@ -128,7 +128,7 @@ Timing: 82.97 ± 2.99s, Min: 78.17s, Max: 87.81s
 Throughput: 120,524.57 ± 4,365.51 rows/s, Min: 113,883.97 rows/s, Max: 127,918.42 rows/s
 ```
 
-10M Rows, 3 columns, each column 8 bytes:
+10M Rows, 4 columns, each column 8 bytes:
 
 ```
 Timing: 15.32 ± 0.70s, Min: 13.82s, Max: 15.93s
@@ -141,15 +141,15 @@ Throughput: 652,938.75 ± 31,429.74 rows/s, Min: 627,658.58 rows/s, Max: 723,686
 
 https://avi.im/blag/2021/fast-sqlite-inserts/
 
-This study gets about 100M rows of 3 columns (all <= 8 bytes wide)
+This study gets about 100M rows of 4 columns (all <= 8 bytes wide)
 into SQLite in under 30s using Rust.
 
 It makes a number of concessions to ACID-compliance that you wouldn't
 actually want to use. So it's value is somewhat limited.
 
 That said, it is solid work since even with all the concessions made
-here (and the change to 3 columns of 8 bytes each), the best I could
-get the SQLite insert to do was 100M in ~180s rather than <30s Avi
+here (and the change to 4 columns of 8 bytes each), the best I could
+get the SQLite insert to do was 100M in ~160s rather than ~20s Avi
 gets:
 
 ```

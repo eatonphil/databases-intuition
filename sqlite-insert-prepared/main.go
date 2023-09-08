@@ -1,13 +1,12 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"os"
 	"time"
 
-	_ "github.com/mattn/go-sqlite3"
+	"github.com/eatonphil/gosqlite"
 	"github.com/montanaflynn/stats"
 	"golang.org/x/text/message"
 )
@@ -36,13 +35,14 @@ var COLUMNS = []string{
 	"j12",
 	"k13",
 	"l14",
-	"m14",
+	"m15",
+	"n16",
 }
 
 const COLUMN_SIZE = 32
 
-func prepare(db *sql.DB) {
-	_, err := db.Exec("DROP TABLE IF EXISTS " + TABLE)
+func prepare(db *gosqlite.Conn) {
+	err := db.Exec("DROP TABLE IF EXISTS " + TABLE)
 	if err != nil {
 		log.Fatalf("Failed to drop: %s", err)
 	}
@@ -56,48 +56,48 @@ func prepare(db *sql.DB) {
 		ddl += column + " TEXT"
 	}
 	ddl += ")"
-	_, err = db.Exec(ddl)
+	err = db.Exec(ddl)
 	if err != nil {
 		log.Fatalf("Failed to create table: %s", err)
 	}
 }
 
-func run(db *sql.DB, rows [][]any) {
-	tx, err := db.Begin()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	insert := "INSERT INTO " + TABLE + " VALUES (\n  "
-	for i := range COLUMNS {
-		if i > 0 {
-			insert += ",\n  "
-		}
-		insert += "?"
-	}
-	insert += "\n)"
-	stmt, err := tx.Prepare(insert)
-	if err != nil {
-		log.Fatalf("Failed to prepare: %s", err)
-	}
-
-	for i, row := range rows {
-		assert(len(row) == len(COLUMNS))
-		_, err = stmt.Exec(row...)
+func run(db *gosqlite.Conn, rows [][]any) {
+		err := db.Begin()
 		if err != nil {
-			log.Fatalf("Failed to copy row %d: %s", i, err)
+			log.Fatal(err)
 		}
-	}
 
-	err = stmt.Close()
-	if err != nil {
-		log.Fatalf("Failed to close: %s", err)
-	}
+		insert := "INSERT INTO " + TABLE + " VALUES (\n  "
+		for i := range COLUMNS {
+			if i > 0 {
+				insert += ",\n  "
+			}
+			insert += "?"
+		}
+		insert += "\n)"
+		stmt, err := db.Prepare(insert)
+		if err != nil {
+			log.Fatalf("Failed to prepare: %s", err)
+		}
 
-	err = tx.Commit()
-	if err != nil {
-		log.Fatalf("Failed to commit: %s", err)
-	}
+		for i, row := range rows {
+			assert(len(row) == len(COLUMNS))
+			err = stmt.Exec(row...)
+			if err != nil {
+				log.Fatalf("Failed to copy row %d: %s", i, err)
+			}
+		}
+
+		err = stmt.Close()
+		if err != nil {
+			log.Fatalf("Failed to close: %s", err)
+		}
+
+		err = db.Commit()
+		if err != nil {
+			log.Fatalf("Failed to commit: %s", err)
+		}
 }
 
 func generateData(n int) [][]any {
@@ -149,11 +149,11 @@ func generateData(n int) [][]any {
 }
 
 func main() {
-	db, err := sql.Open("sqlite3", "data.sqlite")
+	db, err := gosqlite.Open("testdata.db")
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, err = db.Exec("SELECT 1") // Test the connection.
+	err = db.Exec("SELECT 1") // Test the connection.
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -179,11 +179,27 @@ func main() {
 		throughput = append(throughput, float64(ROWS)/diff)
 	}
 
-	var count uint64
-	err = db.QueryRow("SELECT COUNT(1) FROM " + TABLE).Scan(&count)
+	var count int64
+	stmt, err := db.Prepare("SELECT COUNT(1) FROM " + TABLE)
 	if err != nil {
 		log.Fatal(err)
 	}
+	for {
+		hasRow, err := stmt.Step()
+		if err != nil {
+			log.Fatal(err)
+		}
+		if !hasRow {
+			break
+		}
+
+		err = stmt.Scan(&count)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	stmt.Close()
+
 	assert(count == ROWS)
 
 	median, err := stats.Median(times)
@@ -226,6 +242,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	p.Printf("Rows: %d, Columns: %d, Column Size: %d", ROWS, len(COLUMNS), COLUMN_SIZE)
 	p.Printf("Timing: %.2f ± %.2fs, Min: %.2fs, Max: %.2fs\n", median, stddev, min, max)
 	p.Printf("Throughput: %.2f ± %.2f rows/s, Min: %.2f rows/s, Max: %.2f rows/s\n", t_median, t_stddev, t_min, t_max)
 }
