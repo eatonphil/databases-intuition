@@ -50,6 +50,8 @@ Forcing a full-table scan.
 
 ## SQLite
 
+[Source](./sqlite-select-count)
+
 10M Rows, 16 columns, each column 32 bytes:
 
 ```
@@ -66,6 +68,8 @@ Throughput: 15,469,367.49 ± 123,336.16 rows/s, Min: 15,065,057.65 rows/s, Max: 
 
 ## PostgreSQL
 
+[Source](./postgres-select-count)
+
 10M Rows, 16 columns, each column 32 bytes:
 
 ```
@@ -81,6 +85,8 @@ Throughput: 30,613,018.35 ± 2,717,800.48 rows/s, Min: 21,728,298.74 rows/s, Max
 ```
 
 ## MariaDB
+
+[Source](./mariadb-select-count)
 
 10M Rows, 16 columns, each column 32 bytes:
 
