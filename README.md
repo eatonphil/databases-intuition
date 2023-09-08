@@ -48,22 +48,22 @@ SELECT COUNT(1) FROM testtable1 WHERE a1 <> b2
 
 Forcing a full-table scan.
 
-## SQLite
+## MariaDB
 
-[Source](./sqlite-select-count)
+[Source](./mariadb-select-count)
 
 10M Rows, 16 columns, each column 32 bytes:
 
 ```
-Timing: 2.14 ± 0.02s, Min: 2.10s, Max: 2.16s
-Throughput: 4,664,568.46 ± 39,568.72 rows/s, Min: 4,639,582.64 rows/s, Max: 4,767,690.39 rows/s
+Timing: 5.31 ± 4.00s, Min: 5.28s, Max: 15.73s
+Throughput: 1,883,869.01 ± 514,123.28 rows/s, Min: 635,838.73 rows/s, Max: 1,894,079.77 rows/s
 ```
 
 10M Rows, 3 columns, each column 8 bytes:
 
 ```
-Timing: 0.65 ± 0.01s, Min: 0.65s, Max: 0.66s
-Throughput: 15,469,367.49 ± 123,336.16 rows/s, Min: 15,065,057.65 rows/s, Max: 15,492,194.30 rows/s
+Timing: 3.73 ± 0.49s, Min: 3.71s, Max: 5.05s
+Throughput: 2,677,891.78 ± 273,913.40 rows/s, Min: 1,980,034.10 rows/s, Max: 2,695,158.11 rows/s
 ```
 
 ## PostgreSQL
@@ -84,22 +84,22 @@ Timing: 0.33 ± 0.04s, Min: 0.32s, Max: 0.46s
 Throughput: 30,613,018.35 ± 2,717,800.48 rows/s, Min: 21,728,298.74 rows/s, Max: 31,416,940.39 rows/s
 ```
 
-## MariaDB
+## SQLite
 
-[Source](./mariadb-select-count)
+[Source](./sqlite-select-count)
 
 10M Rows, 16 columns, each column 32 bytes:
 
 ```
-Timing: 5.31 ± 4.00s, Min: 5.28s, Max: 15.73s
-Throughput: 1,883,869.01 ± 514,123.28 rows/s, Min: 635,838.73 rows/s, Max: 1,894,079.77 rows/s
+Timing: 2.14 ± 0.02s, Min: 2.10s, Max: 2.16s
+Throughput: 4,664,568.46 ± 39,568.72 rows/s, Min: 4,639,582.64 rows/s, Max: 4,767,690.39 rows/s
 ```
 
 10M Rows, 3 columns, each column 8 bytes:
 
 ```
-Timing: 3.73 ± 0.49s, Min: 3.71s, Max: 5.05s
-Throughput: 2,677,891.78 ± 273,913.40 rows/s, Min: 1,980,034.10 rows/s, Max: 2,695,158.11 rows/s
+Timing: 0.65 ± 0.01s, Min: 0.65s, Max: 0.66s
+Throughput: 15,469,367.49 ± 123,336.16 rows/s, Min: 15,065,057.65 rows/s, Max: 15,492,194.30 rows/s
 ```
 
 # INSERTs
