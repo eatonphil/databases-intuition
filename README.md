@@ -1,10 +1,10 @@
 # Databases Intuition
 
-These are a series of programs to get a vague idea of what's
-possible. The point **is not** to do benchmark wars.
+These are a series of programs to get a ballpark idea of time it takes
+to do various common database operations.
 
-There is **very limited value** in comparing these results across
-database.
+The point **is not** to do benchmark wars. There is **very limited
+value** in comparing these results across database.
 
 If there are obvious ways a program can do better though, please open
 an issue!
