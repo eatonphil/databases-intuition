@@ -1,11 +1,12 @@
 module pebble
 
-go 1.20
+go 1.21.1
+
+replace lib => ../lib
 
 require (
-	github.com/cockroachdb/pebble v0.0.0-20230907151110-6f6852d52f18
-	github.com/montanaflynn/stats v0.7.1
-	golang.org/x/text v0.13.0
+	github.com/cockroachdb/pebble v0.0.0-20230908133356-d69d1a010848
+	lib v0.0.0-00010101000000-000000000000
 )
 
 require (
@@ -24,6 +25,7 @@ require (
 	github.com/kr/pretty v0.2.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
+	github.com/montanaflynn/stats v0.7.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.12.0 // indirect
 	github.com/prometheus/client_model v0.2.1-0.20210607210712-147c58e9608a // indirect
@@ -31,5 +33,6 @@ require (
 	github.com/prometheus/procfs v0.7.3 // indirect
 	golang.org/x/exp v0.0.0-20230626212559-97b1e661b5df // indirect
 	golang.org/x/sys v0.11.0 // indirect
+	golang.org/x/text v0.13.0 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 )
