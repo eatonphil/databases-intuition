@@ -18,28 +18,28 @@ func assert(b bool) {
 	}
 }
 
-const ROWS = 10_000_000
+const ROWS = 100_000_000
 const TABLE = "testtable1"
 
 var COLUMNS = []string{
 	"a1",
 	"b2",
 	"c3",
-	"d4",
-	"e5",
-	"f6",
-	"g7",
-	"h8",
-	"g9",
-	"h10",
-	"i11",
-	"j12",
-	"k13",
-	"l14",
-	"m14",
+	// "d4",
+	// "e5",
+	// "f6",
+	// "g7",
+	// "h8",
+	// "g9",
+	// "h10",
+	// "i11",
+	// "j12",
+	// "k13",
+	// "l14",
+	// "m14",
 }
 
-const COLUMN_SIZE = 32
+const COLUMN_SIZE = 8
 
 func prepare(db *sql.DB) {
 	_, err := db.Exec("DROP TABLE IF EXISTS " + TABLE)
