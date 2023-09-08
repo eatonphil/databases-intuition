@@ -114,6 +114,15 @@ Timing: 16.03 ± 0.27s, Min: 15.69s, Max: 16.74s
 Throughput: 623,745.44 ± 10,296.45 rows/s, Min: 597,525.44 rows/s, Max: 637,489.51 rows/s
 ```
 
+Note: You can get better performance by using
+[bvinc/go-sqlite-lite](https://github.com/bvinc/go-sqlite-lite) or [my
+fork of it](https://github.com/eatonphil/gosqlite). For one, they
+don't go through `database/sql`. But there's probably more to it than
+that.
+
+These are not popular libraries though so using them here felt instead
+of mattn/go-sqlite feels a little misleading.
+
 ## Pebble Batch Insert
 
 [Source](./pebble-batch-insert)
