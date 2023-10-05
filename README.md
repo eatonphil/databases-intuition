@@ -159,6 +159,28 @@ Timing: 23.33 ± 0.27s, Min: 22.71s, Max: 23.87s
 Throughput: 428,680.78 ± 5,069.67 rows/s, Min: 418,996.47 rows/s, Max: 440,284.99 rows/s
 ```
 
+## PostgreSQL Prepared INSERT
+
+[Source](./postgres-insert-prepared)
+
+### 10M Rows, 16 columns, each column 32 bytes
+
+jackc/pgx:
+
+```
+Timing: 513.17 ± 3.62s, Min: 507.24s, Max: 518.04s
+Throughput: 19,486.73 ± 138.02 rows/s, Min: 19,303.53 rows/s, Max: 19,714.58 rows/s
+```
+
+### 10M Rows, 3 columns, each column 8 bytes
+
+jackc/pgx:
+
+```
+Timing: 408.41 ± 3.61s, Min: 403.84s, Max: 414.16s
+Throughput: 24,485.38 ± 215.60 rows/s, Min: 24,145.34 rows/s, Max: 24,762.37 rows/s
+```
+
 ## PostgreSQL COPY FROM
 
 [Source](./postgres-copy)
