@@ -108,7 +108,7 @@ Throughput: 31,078,449.79 ± 2,483,125.81 rows/s, Min: 22,796,606.48 rows/s, Max
 
 ## SQLite
 
-### Go, mattn/sqlite3
+### Go, mattn/go-sqlite3
 
 [Source](./go-sqlite-select-count-mattn)
 
@@ -248,7 +248,7 @@ Throughput: 1,923,722.79 ± 156,820.46 rows/s, Min: 1,676,894.32 rows/s, Max: 2,
 Parameterizes an `INSERT` query and calls the prepared statement for
 each row.
 
-### Go, mattn/sqlite3
+### Go, mattn/go-sqlite3
 
 [Source](./go-sqlite-insert-prepared-mattn)
 
