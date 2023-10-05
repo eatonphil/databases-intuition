@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"log"
 
-	_ "github.com/lib/pq"
+	_ "github.com/jackc/pgx/v5/stdlib"
 
 	// Rewritten to ../lib
 	"lib"
 )
 
 func main() {
-	db, err := sql.Open("postgres", "user=pgtest dbname=pgtest password=pgtest sslmode=disable host=127.0.0.1")
+	db, err := sql.Open("pgx", "user=pgtest dbname=pgtest password=pgtest sslmode=disable host=127.0.0.1")
 	if err != nil {
 		log.Fatal(err)
 	}

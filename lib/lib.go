@@ -25,22 +25,22 @@ var COLUMNS = []string{
 	"a1",
 	"b2",
 	"c3",
-	// "d4",
-	// "e5",
-	// "f6",
-	// "g7",
-	// "h8",
-	// "g9",
-	// "h10",
-	// "i11",
-	// "j12",
-	// "k13",
-	// "l14",
-	// "m15",
-	// "m16",
+	"d4",
+	"e5",
+	"f6",
+	"g7",
+	"h8",
+	"g9",
+	"h10",
+	"i11",
+	"j12",
+	"k13",
+	"l14",
+	"m15",
+	"m16",
 }
 
-const COLUMN_SIZE = 8
+const COLUMN_SIZE = 32
 
 var BYTES_PER_ROW = float64(len(COLUMNS) * COLUMN_SIZE)
 

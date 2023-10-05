@@ -70,18 +70,36 @@ Throughput: 2,677,891.78 ± 273,913.40 rows/s, Min: 1,980,034.10 rows/s, Max: 2,
 
 [Source](./postgres-select-count)
 
-10M Rows, 16 columns, each column 32 bytes:
+### 10M Rows, 16 columns, each column 32 bytes
+
+lib/pq:
 
 ```
 Timing: 0.74 ± 0.29s, Min: 0.69s, Max: 1.69s
 Throughput: 13,579,422.60 ± 2,537,298.51 rows/s, Min: 5,905,851.18 rows/s, Max: 14,413,751.50 rows/s
 ```
 
-10M Rows, 3 columns, each column 8 bytes:
+jackc/pgx:
+
+```
+Timing: 0.76 ± 0.36s, Min: 0.72s, Max: 1.95s
+Throughput: 13,219,135.30 ± 2,598,054.57 rows/s, Min: 5,127,178.31 rows/s, Max: 13,860,787.47 rows/s
+```
+
+### 10M Rows, 3 columns, each column 8 bytes
+
+lib/pq
 
 ```
 Timing: 0.33 ± 0.04s, Min: 0.32s, Max: 0.46s
 Throughput: 30,613,018.35 ± 2,717,800.48 rows/s, Min: 21,728,298.74 rows/s, Max: 31,416,940.39 rows/s
+```
+
+jackc/pgx:
+
+```
+Timing: 0.32 ± 0.04s, Min: 0.32s, Max: 0.44s
+Throughput: 31,078,449.79 ± 2,483,125.81 rows/s, Min: 22,796,606.48 rows/s, Max: 31,118,025.44 rows/s
 ```
 
 ## SQLite
@@ -147,18 +165,36 @@ Throughput: 428,680.78 ± 5,069.67 rows/s, Min: 418,996.47 rows/s, Max: 440,284.
 
 Uses a single `COPY` query.
 
-10M Rows, 16 columns, each column 32 bytes:
+### 10M Rows, 16 columns, each column 32 bytes
+
+lib/pq:
 
 ```
 Timing: 104.53 ± 2.40s, Min: 102.57s, Max: 110.08s
 Throughput: 95,665.37 ± 2,129.25 rows/s, Min: 90,847.08 rows/s, Max: 97,490.96 rows/s
 ```
 
-10M Rows, 3 columns, each column 8 bytes:
+jackc/pgx:
+
+```
+Timing: 46.54 ± 1.60s, Min: 44.09s, Max: 49.51s
+Throughput: 214,869.42 ± 7,265.10 rows/s, Min: 201,991.37 rows/s, Max: 226,801.07 rows/s
+```
+
+### 10M Rows, 3 columns, each column 8 bytes:
+
+lib/pq:
 
 ```
 Timing: 8.16 ± 0.43s, Min: 7.44s, Max: 8.80s
 Throughput: 1,225,986.47 ± 66,631.53 rows/s, Min: 1,136,581.82 rows/s, Max: 1,343,441.37 rows/s
+```
+
+jackc/pgx:
+
+```
+Timing: 5.20 ± 0.44s, Min: 4.71s, Max: 5.96s
+Throughput: 1,923,722.79 ± 156,820.46 rows/s, Min: 1,676,894.32 rows/s, Max: 2,124,966.60 rows/s
 ```
 
 ## SQLite Parameterized INSERT
