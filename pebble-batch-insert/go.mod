@@ -1,11 +1,11 @@
 module pebble
 
-go 1.21.1
+go 1.20
 
-replace lib => ../lib
+replace lib => ../go-lib
 
 require (
-	github.com/cockroachdb/pebble v0.0.0-20230908133356-d69d1a010848
+	github.com/cockroachdb/pebble v0.0.0-20231005170934-488f557d6f35
 	lib v0.0.0-00010101000000-000000000000
 )
 

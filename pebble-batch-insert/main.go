@@ -8,7 +8,7 @@ import (
 
 	"github.com/cockroachdb/pebble"
 
-	// Rewritten to ../lib
+	// Rewritten to ../go-lib
 	"lib"
 )
 
