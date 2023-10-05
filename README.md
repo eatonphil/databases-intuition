@@ -1,7 +1,8 @@
 # Databases Intuition
 
 These are a series of programs to get a ballpark idea of time it takes
-to do various common database operations.
+to do various common database operations, across programming languages
+(potentially) and database drivers.
 
 The point **is not** to do benchmark wars. There is **very limited
 value** in comparing these results across database.
@@ -21,7 +22,7 @@ Rise-1](https://eco.us.ovhcloud.com/#filterType=range_element&filterValue=rise).
 
 ## Databases
 
-* SQLite: 3.40.1
+* SQLite: 3.43.1
 * PostgreSQL: 15.1
 * MariaDB: 10.5.21
 * Pebble: v0.0.0-20230907151110-6f6852d52f18
@@ -254,15 +255,15 @@ each row.
 10M Rows, 16 columns, each column 32 bytes:
 
 ```
-Timing: 52.67 ± 1.70s, Min: 49.91s, Max: 55.46s
-Throughput: 189,862.60 ± 6,175.26 rows/s, Min: 180,316.37 rows/s, Max: 200,346.56 rows/s
+Timing: 56.53 ± 1.26s, Min: 55.05s, Max: 59.62s
+Throughput: 176,893.65 ± 3,853.90 rows/s, Min: 167,719.97 rows/s, Max: 181,646.02 rows/s
 ```
 
 10M Rows, 3 columns, each column 8 bytes:
 
 ```
-Timing: 16.03 ± 0.27s, Min: 15.69s, Max: 16.74s
-Throughput: 623,745.44 ± 10,296.45 rows/s, Min: 597,525.44 rows/s, Max: 637,489.51 rows/s
+Timing: 15.92 ± 0.25s, Min: 15.69s, Max: 16.67s
+Throughput: 628,044.37 ± 9,703.92 rows/s, Min: 599,852.91 rows/s, Max: 637,435.60 rows/s
 ```
 
 ### Go, eatonphil/gosqlite
@@ -272,15 +273,15 @@ Throughput: 623,745.44 ± 10,296.45 rows/s, Min: 597,525.44 rows/s, Max: 637,489
 10M Rows, 16 columns, each column 32 bytes:
 
 ```
-Timing: 46.54 ± 1.13s, Min: 43.03s, Max: 46.97s
-Throughput: 214,890.32 ± 5,578.37 rows/s, Min: 212,888.21 rows/s, Max: 232,407.45 rows/s
+Timing: 45.51 ± 0.70s, Min: 43.72s, Max: 45.93s
+Throughput: 219,729.65 ± 3,447.56 rows/s, Min: 217,742.98 rows/s, Max: 228,711.51 rows/s
 ```
 
 10M Rows, 3 columns, each column 8 bytes:
 
 ```
-Timing: 10.62 ± 0.20s, Min: 10.26s, Max: 10.89s
-Throughput: 941,563.78 ± 18,236.94 rows/s, Min: 918,040.02 rows/s, Max: 974,389.05 rows/s
+Timing: 10.44 ± 0.20s, Min: 10.02s, Max: 10.68s
+Throughput: 957,939.60 ± 18,879.43 rows/s, Min: 936,114.60 rows/s, Max: 998,426.62 rows/s
 ```
 
 ## Pebble Batch Insert

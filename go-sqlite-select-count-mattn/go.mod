@@ -1,11 +1,14 @@
 module sqlite
 
-go 1.20
+go 1.21.2
 
 replace lib => ../go-lib
 
+// Only to force SQLite 3.43.1
+replace github.com/mattn/go-sqlite3 => github.com/eatonphil/go-sqlite3 v1.14.14-0.20231005193852-b20e196f602b
+
 require (
-	github.com/mattn/go-sqlite3 v1.14.17
+	github.com/mattn/go-sqlite3 v0.0.0-00010101000000-000000000000
 	lib v0.0.0-00010101000000-000000000000
 )
 

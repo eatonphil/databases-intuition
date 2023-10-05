@@ -16,10 +16,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, err = db.Exec("SELECT 1") // Test the connection.
+	var version string
+	err = db.QueryRow("SELECT sqlite_version()").Scan(&version) // Test the connection.
 	if err != nil {
 		log.Fatal(err)
 	}
+	lib.Assert(version == "3.43.1")
 
 	fmt.Println("Generating data")
 	data := lib.GenerateData()

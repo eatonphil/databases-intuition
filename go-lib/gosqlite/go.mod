@@ -1,5 +1,5 @@
 module gosqlite
 
-go 1.20
+go 1.21.2
 
-require github.com/eatonphil/gosqlite v0.7.0
+require github.com/eatonphil/gosqlite v0.8.0
